@@ -30,9 +30,9 @@ jobs:
       - run: flutter doctor
       - name: Start release build
         run: dart pub get
-      # - run: dart pub run flutter_launcher_icons
-      # - run: dart run build_runner build --delete-conflicting-outputs
-      # - run: flutter build appbundle --release --dart-define-from-file=config.json --build-number=${{ github.run_number }} --build-name=$(git describe --tags `git rev-list --tags --max-count=1`)
+      - run: dart pub run flutter_launcher_icons
+      - run: dart run build_runner build --delete-conflicting-outputs
+      - run: flutter build appbundle --release --dart-define-from-file=config.json --build-number=${{ github.run_number }} --build-name=$(git describe --tags `git rev-list --tags --max-count=1`)
       - name: Upload APK artifact
         uses: actions/upload-artifact@v2
         with:
