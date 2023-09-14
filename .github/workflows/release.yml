@@ -1,0 +1,41 @@
+name: Release workflow
+
+on:
+  push:
+    tags:
+      - '*.*.*'
+  workflow_dispatch:
+
+jobs:
+  build_and_publish:
+    name: Assemble release APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate JSON
+        uses: walbo/validate-json@v1.1.0
+        with:
+          files: assets/questions.json
+          schema: schemas/questions_schema.json    
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - uses: android-actions/setup-android@v2
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      - run: flutter doctor
+      - name: Start release build
+        run: dart pub get
+      # - run: dart pub run flutter_launcher_icons
+      # - run: dart run build_runner build --delete-conflicting-outputs
+      # - run: flutter build appbundle --release --dart-define-from-file=config.json --build-number=${{ github.run_number }} --build-name=$(git describe --tags `git rev-list --tags --max-count=1`)
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 1
